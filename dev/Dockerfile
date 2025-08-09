@@ -15,13 +15,6 @@ ENV GOBIN=$GOPATH/bin
 ENV PATH=$PATH:$GOBIN
 
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 22
-
-RUN mkdir -p ${NVM_DIR} && \
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
-    \. "$NVM_DIR/nvm.sh" && \
-    nvm install ${NODE_VERSION} && \
-    npm install -g @anthropic-ai/claude-code
 
 # Download and install aws sam
 RUN wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip && \
@@ -30,3 +23,15 @@ RUN wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli
 
 # Set back to coder user
 USER coder
+
+ENV NODE_VERSION 22
+ENV NVM_DIR=/home/coder/.nvm
+
+RUN mkdir -p ${NVM_DIR} && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
+    \. "$NVM_DIR/nvm.sh" && \
+    nvm install ${NODE_VERSION} && \
+    npm install -g @anthropic-ai/claude-code
+
+RUN echo "export NVM_DIR=$NVM_DIR" >> ~/.bashrc \
+  && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
